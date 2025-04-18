@@ -1,8 +1,7 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,6 +37,19 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        if self.len() == 1 {
+            return;
+        } else {
+            let mut i = self.len();
+            while i != 1 {
+                if (self.comparator)(&self.items[i], &self.items[i / 2]) {
+                    self.items.swap(i, i / 2);
+                }
+                i = self.parent_idx(i);
+            }
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +70,11 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        if (self.comparator)(&self.items[2 * idx], &self.items[2 * idx + 1]) {
+            2 * idx
+        } else {
+            2 * idx + 1
+        }
     }
 }
 
@@ -85,7 +101,42 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+        if self.len() == 0 {
+            None
+        } else {
+            self.items.swap(1, self.count);
+            self.count -= 1;
+            let mut i = 1;
+            loop {
+                if 2 * i <= self.count && 2 * i + 1 <= self.count {
+                    let sci = self.smallest_child_idx(i);
+                    if (self.comparator)(&self.items[i], &self.items[sci]) {
+                        break;
+                    } else {
+                        self.items.swap(i, sci);
+                    }
+                    i = self.smallest_child_idx(i);
+                    // if (self.comparator)(&self.items[2 * i], &self.items[2 * i + 1]) {
+                    //     self.items.swap(i, 2 * i);
+                    //     i = 2 * i;
+                    // } else {
+                    //     self.items.swap(i, 2 * i + 1);
+                    //     i = 2 * i + 1;
+                    // }
+                } else if 2 * i <= self.count && 2 * i + 1 > self.count {
+                    // self.items.swap(i, 2 * i);
+                    if (self.comparator)(&self.items[i], &self.items[2 * i]) {
+                        break;
+                    } else {
+                        self.items.swap(i, 2 * i);
+                    }
+                    i = 2 * i;
+                } else {
+                    break;
+                }
+            }
+            self.items.pop()
+        }
     }
 }
 
